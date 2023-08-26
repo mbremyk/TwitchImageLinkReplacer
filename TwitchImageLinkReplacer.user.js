@@ -10,26 +10,23 @@
 
 let extensions = ['gif', 'png', 'jpg', 'jpeg'];
 
-let updateChatGifs = (timeout = 2000) => {
-  let chat = [...document.getElementsByClassName('chat-line__message')];
+let updateChatGifs = (callback = null, timeout = 2000) => {
+  let links = [...document.querySelectorAll('.link-fragment')];
 
-  chat.forEach(element => {
-    let messageSpan = element.querySelectorAll('.message')[0];
-    if (messageSpan) {
-      let link = element.querySelectorAll('a')[0];
-      if (link) {
-        let href = link.getAttribute('href');
-        if (extensions.some(ext => href.includes(ext))) {
-          let img = document.createElement('img');
-          img.setAttribute('src', href);
-          element.appendChild(img);
-          link.remove();
-        }
-      }
+  links.forEach(element => {
+    let link = element.getAttribute('href');
+    if (extensions.some(ext => link.includes(ext))) {
+      let parent = element.parentElement;
+      let img = document.createElement('img');
+      img.setAttribute('src', link);
+      parent.appendChild(img);
+      element.remove();
     }
   });
 
-  setTimeout(updateChatGifs, timeout);
+  if (callback) {
+    setTimeout(() => callback(callback), timeout);
+  }
 };
 
-updateChatGifs();
+updateChatGifs((callback) => updateChatGifs(callback));
